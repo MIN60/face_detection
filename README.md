@@ -1,23 +1,28 @@
 # face_detection
 Face detection using opencv
 
-2023-2 컴퓨터비전 수업 Face (Hand) Detection
+Computer Vision Class for the Second Semester of 2023
 
-## 컬러 공간의 변환
-RGB color 공간은 빛에 민감하기 외부 조명의 차이에 따라 색의 분포가 변화하게 됩니다. 이와 반대로 YCbCr 컬러공간은 RGB컬러공간보다 조명의 변화에 영향을 적게 받으므로 더 정확한 얼굴 영역을 추출할 수 있습니다. YCbCr은 색상 정보로부터 광도를 분리할 수 있는 컬러 공간이며, Y는 광도(밝기)를 나타내며 Cb,Cr은 각각 푸른색 색차와 붉은색 색차를 나타냅니다. 
-조명에 의한 영향이 적은 성분인 Cb와 Cr성분을 얼굴색 영역에서 분리하고 이미지 영역이 Cb와 Cr성분이 임의로 설정한 값의 범위 내에 있다면, 얼굴 영역이라고 추정하도록 설정했습니다. 이후 노이즈를 제거하고, 여러 처리들을 통해 얼굴 영역을 검출했습니다.
+Face (Hand) Detection
 
-## 과제 구상
-1.	RGB를 YCbCr로 변환하여 Y, Cb, Cr 채널 제작
-2.	Skin color 영역은 Cb, Cr에 존재하므로 이 두 채널을 합쳐 공통적으로 얼굴 영역 추정
-3.	이진화하여 배경 영역과 얼굴 추정 영역 구분
-4.	침식, 팽창, 가우시안 필터를 이용하여 노이즈 제거
-5.	검출영역 크기 및 중복 검사로 허위 검출 정보 제거
-6.	피부색으로 예측되는 하얀색 부분을 비교하여 손과 얼굴 영역 구분
-7.	얼굴로 판단된 영역에 rectangle을 이용하여 파란색 사각형 생성
-8.	그려지는 사각형 개수를 토대로 검출된 얼굴 개수 출력
+## Color space transformation
+RGB color space is sensitive to variations in external lighting, which can lead to changes in the distribution of colors. In contrast, the YCbCr color space is less affected by changes in lighting compared to RGB color space, making it more suitable for accurate facial area extraction. YCbCr separates luminance information from chrominance information, where Y represents luminance (brightness), and Cb and Cr represent the blue color difference and red color difference, respectively.
 
-## 알고리즘 설명
+By isolating the components Cb and Cr, which are less affected by lighting, from the facial color area and ensuring that the image area falls within a predefined range of Cb and Cr values, you have set up a method to estimate the facial area. Subsequently, noise is removed, and various processing techniques are applied to detect the facial area.
+
+This approach takes advantage of the characteristics of YCbCr color space to enhance facial area extraction and reduce the impact of lighting variations on the results.
+
+## Outline
+1.	Convert RGB to YCbCr to create Y, Cb, and Cr channels.
+2.	Combine Cb and Cr channels as the skin color information exists in these two channels, estimating the common facial area.
+3.	Perform binary segmentation to differentiate between the background and estimated facial area.
+4.	Apply erosion, dilation, and Gaussian filters for noise reduction.
+5.	Remove false detection information through detection area size and overlap checks.
+6.	Distinguish between hand and facial areas by comparing white areas predicted as skin color.
+7.	Create blue rectangles on the areas identified as faces.
+8.	Output the number of detected faces based on the drawn rectangles.
+
+## Algorithm Explanation
 
 ```C++
         Mat ycbcr;  // YCbCr이미지 저장 객체
@@ -48,7 +53,7 @@ RGB color 공간은 빛에 민감하기 외부 조명의 차이에 따라 색의
         }
 ```
 
-우선 RGB 컬러모델을 YCbCr로 변환하고, 각 채널을 분리합니다. 이후 영역이 임의로 설정한 Cb와 Cr 범위 값 안에 속하면 하얀색으로 설정하고, 아닌 경우 검은색으로 설정하여 이진화 합니다.
+First, convert the RGB color model to YCbCr and separate each channel. Then, if the region falls within the predefined Cb and Cr range values, set it as white; otherwise, set it as black, and perform binarization.
 
 ```C++
         //침식, 팽창, 가우시안을 통한 노이즈 제거
