@@ -39,4 +39,33 @@ findContours 함수를 통해 검출된 윤곽을 토대로 1차로 얼굴과 �
 
 ![image](https://github.com/MIN60/face_detection/assets/49427080/dbbd823e-0492-4cb3-b08a-8c05c4ac31cd)
 
+![image](https://github.com/MIN60/face_detection/assets/49427080/8f628036-dc7e-4882-a319-6e43117f9700)
+
+실험 시 얼굴 영역 박스 안에 또 박스가 생기는 문제점이 있었습니다. 이를 방지하기 위해서 겹치는 영역의 경우에는 표시하지 않도록 알고리즘을 구성하였습니다.
+
+![image](https://github.com/MIN60/face_detection/assets/49427080/faecfa79-c9c4-4572-99f9-37f02976e7b1)
+![image](https://github.com/MIN60/face_detection/assets/49427080/7b42b756-ebfc-49db-912c-3c8ddf1d09e5)
+
+2차로 손과 얼굴을 구분하기 위한 알고리즘입니다. 먼저 손과 얼굴의 특징을 생각했습니다. 이진화 한 영상에서 손의 경우에는 손가락으로 인해 연결된 흰색 부분이 끊기거나 면적이 작습니다. 반대로 얼굴의 이마는 끊긴 부분 없이 연결된 모습입니다. 이를 이용하여 얼굴 영역이라고 인식된 박스의 상단에서 50픽셀정도 떨어진 부분의 행을 검사하여 흰색 부분이 박스 너비의 50% 이상이 되지 않으면 얼굴 영역이 아닌 것으로 판단하고, 50% 이상일 경우 얼굴영역으로 판단하여 파란색 박스를 그리도록 알고리즘을 구상하였습니다.
+
+![image](https://github.com/MIN60/face_detection/assets/49427080/1cb6e37d-be46-49b7-9c9b-a2cce52e4c87)
+
+이마와 손가락의 빨간 줄이 검사 위치입니다.
+
+![image](https://github.com/MIN60/face_detection/assets/49427080/459c9407-ec63-47a3-a76a-808329c6704b)
+
+마지막으로 얼굴이 검출된 영상을 띄우고 표시되는 영상 하단에 검출된 얼굴의 개수를 표시합니다. 
+
+## 결과 이미지
+
+![image](https://github.com/MIN60/face_detection/assets/49427080/46fd8200-9400-4f75-ad0d-995df5a21039)
+![image](https://github.com/MIN60/face_detection/assets/49427080/81495442-cca0-46c1-a541-114836a52ebc)
+
+
+
+
+
+
+
+
 
