@@ -1,3 +1,8 @@
+✨ If you need a README in Korean, please check the 'korean' branch.
+
+✨한국어로 된 readme가 필요하시다면 'korean' branch를 확인해주세요
+
+
 # face_detection
 Face detection using opencv
 
