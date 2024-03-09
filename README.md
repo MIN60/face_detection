@@ -61,11 +61,12 @@ First, convert the RGB color model to YCbCr and separate each channel. Then, if 
         dilate(result, result, Mat::ones(Size(3, 3), CV_8UC1), Point(-1, -1), 3);
         GaussianBlur(result, result, Size(5, 5), 0);
 ```
-노이즈 제거를 위해 영상 처리 및 응용 시간에 배운 침식, 팽창, 가우시안 필터를 이용하였습니다.
+
+To remove noise, erosion, dilation, and Gaussian filters learned in image processing and applications were employed.
 
 ![image](https://github.com/MIN60/face_detection/assets/49427080/e1d99df1-4df5-4f00-99f0-0dd11e927bf6)
 
-이진화를 진행하였을 때의 실험 영상입니다.
+This is the experimental image after binarization.
 
 ```C++
         // 너무 작은 박스랑 큰 박스 거르기
@@ -87,9 +88,13 @@ First, convert the RGB color model to YCbCr and separate each channel. Then, if 
         }
 ```
 
-findContours 함수를 통해 검출된 윤곽을 토대로 1차로 얼굴과 손을 구분해줍니다. 먼저 윤곽의 넓이가 임의로 지정한 최소 넓이보다 크고, 최대 크기보다 작으면 검출을 시도합니다. 
-그 다음 윤곽 영역의 넓이와 윤곽을 감싸는 최소 크기의 사각형 박스의 넓이를 비교하여 얼굴 여부를 판별합니다. 얼굴의 윤곽은 동그란 모습이기 때문에 얼굴 윤곽 영역을 감싸는 사각형 박스의 경우 얼굴 영역과 많은 부분이 겹쳐 있습니다. 하지만 펼친 손의 경우 얼굴이 비해 상대적으로 박스 내부에서 손 영역이 차지하는 비율이 적습니다. 이를 이용해 윤곽의 영역의 넓이가 윤곽을 감싸는 박스의 넓이의 0.5퍼센트보다 작은 경우 얼굴이 아니라고 판별했습니다. 
-이후 윤곽의 둘레와 윤곽을 감싸는 박스의 둘레를 비교하여 얼굴 여부를 판별합니다. 얼굴의 윤곽은 보통 동그란 모양으로 일정합니다. 하지만 손의 경우 손의 윤곽을 따라 그려지기 때문에 얼굴을 검출한 영역의 둘레보다 긴 둘레를 가집니다. 이를 이용하여 윤곽을 감싸는 박스의 둘레와 비교하여 박스의 둘레의 1.5배보다 작은 경우에만 얼굴이라고 판별했습니다. 
+
+Using the findContours function, contours are detected to initially distinguish between faces and hands. First, detection is attempted if the area of the contour is larger than a predefined minimum area and smaller than the maximum size.
+
+Next, the area of the contour region is compared with the area of the minimum bounding rectangle to determine if it's a face. Since facial contours tend to be circular, the bounding rectangle around the face area overlaps significantly with the face. However, for a stretched-out hand, the area occupied by the hand within the bounding box is relatively small compared to the face. Therefore, contours with an area less than 0.5 percent of the area of the bounding box were classified as non-facial.
+
+Subsequently, the perimeter of the contour and the perimeter of the bounding box are compared to determine if it's a face. Facial contours are typically circular, while hand contours tend to be longer due to the fingers. Thus, contours with a perimeter less than 1.5 times the perimeter of the bounding box were classified as faces.
+
 
 
 ![image](https://github.com/MIN60/face_detection/assets/49427080/dbbd823e-0492-4cb3-b08a-8c05c4ac31cd)
@@ -109,7 +114,7 @@ findContours 함수를 통해 검출된 윤곽을 토대로 1차로 얼굴과 �
         }
 ```
 
-실험 시 얼굴 영역 박스 안에 또 박스가 생기는 문제점이 있었습니다. 이를 방지하기 위해서 겹치는 영역의 경우에는 표시하지 않도록 알고리즘을 구성하였습니다.
+To address the issue of multiple bounding boxes appearing within the facial area during experimentation, the algorithm was designed to prevent overlapping regions from being displayed.
 
 ```C++
         // 검출된 얼굴 수
@@ -157,11 +162,13 @@ findContours 함수를 통해 검출된 윤곽을 토대로 1차로 얼굴과 �
         }
 ```
 
-2차로 손과 얼굴을 구분하기 위한 알고리즘입니다. 먼저 손과 얼굴의 특징을 생각했습니다. 이진화 한 영상에서 손의 경우에는 손가락으로 인해 연결된 흰색 부분이 끊기거나 면적이 작습니다. 반대로 얼굴의 이마는 끊긴 부분 없이 연결된 모습입니다. 이를 이용하여 얼굴 영역이라고 인식된 박스의 상단에서 50픽셀정도 떨어진 부분의 행을 검사하여 흰색 부분이 박스 너비의 50% 이상이 되지 않으면 얼굴 영역이 아닌 것으로 판단하고, 50% 이상일 경우 얼굴영역으로 판단하여 파란색 박스를 그리도록 알고리즘을 구상하였습니다.
+The algorithm for distinguishing between hands and faces in the second stage was developed by considering the characteristics of hands and faces. In the binary image, hand regions tend to have disconnected or smaller areas due to fingers, while facial regions typically exhibit connected features without significant breaks.
+
+To utilize this, the algorithm inspects the rows located approximately 50 pixels below the top of the bounding boxes recognized as facial areas. If the white area in this row does not cover more than 50% of the box's width, it is deemed non-facial. However, if it covers more than 50%, it is classified as a facial area, and a blue box is drawn accordingly.
 
 ![image](https://github.com/MIN60/face_detection/assets/49427080/1cb6e37d-be46-49b7-9c9b-a2cce52e4c87)
 
-이마와 손가락의 빨간 줄이 검사 위치입니다.
+The red lines represent the inspection positions for the forehead and fingers.
 
 ```C++
         // 검출된 얼굴 수 표시
@@ -180,7 +187,7 @@ findContours 함수를 통해 검출된 윤곽을 토대로 1차로 얼굴과 �
             break;
 ```
 
-마지막으로 얼굴이 검출된 영상을 띄우고 표시되는 영상 하단에 검출된 얼굴의 개수를 표시합니다. 
+Finally, the image displaying the detected faces is shown, and the number of detected faces is indicated at the bottom of the displayed image.
 
 ## 결과 이미지
 
